@@ -11,6 +11,8 @@ const FormularioUSMP = () => {
   const [nombres, setNombres] = useState('');
   const [mensajeError, setMensajeError] = useState('');
   const [tiposDocumento, setTiposDocumento] = useState<{ idDocumento: number; documento: string }[]>([]);
+  const [correo, setCorreo] = useState('');
+  const [telefono, setTelefono] = useState('');
 
   useEffect(() => {
     fetch("https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/listaTipoDocumento")
@@ -31,46 +33,74 @@ const FormularioUSMP = () => {
   };
 
   useEffect(() => {
-  const tipoSeleccionado = tiposDocumento.find(doc => doc.idDocumento === tipoDoc);
+    const tipoSeleccionado = tiposDocumento.find(doc => doc.idDocumento === tipoDoc);
 
-  if (tipoSeleccionado?.documento === "DNI" && numero.length === 8 && verificador.length === 1) {
-    const consultarAPI = async () => {
-      try {
-        const response = await axios.post(
-          'https://apiperu.dev/api/dni',
-          { dni: numero },
-          {
-            headers: {
-              Authorization: 'Bearer 5ef0d9fc00e59293384a9977675e95edd75cae1e1044c4077f9f78715ffac1d8',
-              'Content-Type': 'application/json',
-              Accept: 'application/json'
+    if (tipoSeleccionado?.documento === "DNI" && numero.length === 8 && verificador.length === 1) {
+      const consultarAPI = async () => {
+        try {
+          const response = await axios.post(
+            'https://apiperu.dev/api/dni',
+            { dni: numero },
+            {
+              headers: {
+                Authorization: 'Bearer 5ef0d9fc00e59293384a9977675e95edd75cae1e1044c4077f9f78715ffac1d8',
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+              }
             }
+          );
+
+          if (response.data.success && String(response.data.data.codigo_verificacion) === verificador) {
+            setApellidoPaterno(response.data.data.apellido_paterno);
+            setApellidoMaterno(response.data.data.apellido_materno);
+            setNombres(response.data.data.nombres);
+            setMensajeError('');
+          } else {
+            setMensajeError('DNI o código incorrecto');
+            setApellidoPaterno('');
+            setApellidoMaterno('');
+            setNombres('');
           }
-        );
 
-        if (response.data.success && String(response.data.data.codigo_verificacion) === verificador) {
-          setApellidoPaterno(response.data.data.apellido_paterno);
-          setApellidoMaterno(response.data.data.apellido_materno);
-          setNombres(response.data.data.nombres);
-          setMensajeError('');
-        } else {
-          setMensajeError('DNI o código incorrecto');
-          setApellidoPaterno('');
-          setApellidoMaterno('');
-          setNombres('');
+          console.log('Respuesta API:', response.data);
+        } catch (err) {
+          console.error('Error al consultar la API:', err);
+          setMensajeError('Error al consultar el DNI');
         }
+      };
 
-        console.log('Respuesta API:', response.data);
-      } catch (err) {
-        console.error('Error al consultar la API:', err);
-        setMensajeError('Error al consultar el DNI');
-      }
-    };
+      consultarAPI();
+    }
+  }, [numero, verificador, tipoDoc, tiposDocumento]);
 
-    consultarAPI();
-  }
-}, [numero, verificador, tipoDoc, tiposDocumento]);
+  const handleRegistrar = async () => {
+    try {
+      const body = {
+        idTipoDocumento: tipoDoc,
+        documento: numero,
+        apellidoPaterno,
+        apellidoMaterno,
+        nombres,
+        email: correo,
+        celular: telefono
+      };
 
+      const response = await axios.post(
+        'https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/registrar',
+        body
+      );
+
+      if (response.data?.idTipoMensaje === 0) {
+      alert('Registro realizado satisfactoriamente');
+      setMensajeError('');
+    } else {
+      setMensajeError(response.data.mensaje || 'Error desconocido al registrar');
+    }
+    } catch (error) {
+      console.error('Error al registrar los datos:', error);
+      alert('Hubo un error al registrar los datos');
+    }
+  };
 
   return (
     <div className="contenedor-principal">
@@ -102,7 +132,6 @@ const FormularioUSMP = () => {
 
             <input
               type="text"
-              placeholder=""
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
               maxLength={tipoDoc === 1 ? 8 : 15}
@@ -113,7 +142,6 @@ const FormularioUSMP = () => {
             {tipoDoc === 1 && (
               <input
                 type="text"
-                placeholder=""
                 value={verificador}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -149,12 +177,23 @@ const FormularioUSMP = () => {
               onChange={(e) => setNombres(e.target.value)}
               readOnly={tipoDoc === 1}
             />
-            <input type="text" placeholder="Teléfono" />
-            <input type="email" placeholder="Correo" className="colspan" />
+            <input
+              type="text"
+              placeholder="Teléfono"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+            />
+            <input
+              type="email"
+              placeholder="Correo"
+              className="colspan"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+            />
           </div>
 
           <div className="botones">
-            <button className="btn-rojo">Buscar</button>
+            <button className="btn-rojo" onClick={handleRegistrar}>Registrar</button>
             <button className="btn-gris">Limpiar Datos</button>
           </div>
         </div>
