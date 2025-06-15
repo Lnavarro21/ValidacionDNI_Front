@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './App.css';
 
 const FormularioUSMP = () => {
@@ -33,14 +34,24 @@ const FormularioUSMP = () => {
   const tipoSeleccionado = tiposDocumento.find(doc => doc.idDocumento === tipoDoc);
 
   if (tipoSeleccionado?.documento === "DNI" && numero.length === 8 && verificador.length === 1) {
-    fetch(`https://apiperu.dev/api/dni/${numero}?token=5ef0d9fc00e59293384a9977675e95edd75cae1e1044c4077f9f78715ffac1d8`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("Respuesta API:", data);
-        if (data.success && String(data.data.codigo_verificacion) === verificador) {
-          setApellidoPaterno(data.data.apellido_paterno);
-          setApellidoMaterno(data.data.apellido_materno);
-          setNombres(data.data.nombres);
+    const consultarAPI = async () => {
+      try {
+        const response = await axios.post(
+          'https://apiperu.dev/api/dni',
+          { dni: numero },
+          {
+            headers: {
+              Authorization: 'Bearer 5ef0d9fc00e59293384a9977675e95edd75cae1e1044c4077f9f78715ffac1d8',
+              'Content-Type': 'application/json',
+              Accept: 'application/json'
+            }
+          }
+        );
+
+        if (response.data.success && String(response.data.data.codigo_verificacion) === verificador) {
+          setApellidoPaterno(response.data.data.apellido_paterno);
+          setApellidoMaterno(response.data.data.apellido_materno);
+          setNombres(response.data.data.nombres);
           setMensajeError('');
         } else {
           setMensajeError('DNI o código incorrecto');
@@ -48,13 +59,18 @@ const FormularioUSMP = () => {
           setApellidoMaterno('');
           setNombres('');
         }
-      })
-      .catch(err => {
-        console.error("Error en API externa:", err);
+
+        console.log('Respuesta API:', response.data);
+      } catch (err) {
+        console.error('Error al consultar la API:', err);
         setMensajeError('Error al consultar el DNI');
-      });
+      }
+    };
+
+    consultarAPI();
   }
 }, [numero, verificador, tipoDoc, tiposDocumento]);
+
 
   return (
     <div className="contenedor-principal">
