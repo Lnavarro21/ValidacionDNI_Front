@@ -1,0 +1,137 @@
+/* Centrado general */
+.contenedor-principal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.formulario {
+  width: 100%;
+  max-width: 900px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezado */
+.icono-encabezado {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.logo-usmp {
+  height: 90px;
+}
+
+/* Navegación */
+.barra-navegacion {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  background-color: #8b0000;
+  padding: 10px;
+  border-radius: 5px;
+}
+.barra-navegacion button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+.barra-navegacion button:hover {
+  text-decoration: underline;
+}
+
+/* Secciones */
+.seccion {
+  border: 1px solid #b30000;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+
+.seccion h2 {
+  color: #8b0000;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Campos */
+.fila {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.colspan {
+  grid-column: span 2;
+}
+
+input, select {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  width: 100%;
+}
+
+/* Botones */
+.botones {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-rojo {
+  background-color: #8b0000;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-rojo:hover {
+  background-color: #a00000;
+}
+
+.btn-gris {
+  background-color: #ccc;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-gris:hover {
+  background-color: #aaa;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.tabs button {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.tabs button:hover {
+  background-color: #c0c0c0;
+}
