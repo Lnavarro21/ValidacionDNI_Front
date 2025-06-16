@@ -76,6 +76,15 @@
   
 }
 
+.segundoform {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  width: 80%;
+  margin: 0 auto 15px 150px ;
+  
+}
+
 .colspan {
   grid-column: span 1;
 }

@@ -256,7 +256,7 @@ const FormularioUSMP = () => {
                 <button key={label}>{label}</button>
               ))}
             </div>
-            <div className="grid">
+            <div className="segundoform">
               <select value={sedeSeleccionada ?? ''} onChange={(e) => setSedeSeleccionada(Number(e.target.value))}>
                 <option value="">SEDE</option>
                 {sedes.map(s => (
