@@ -166,3 +166,52 @@ select{
   padding-top: 10px;
   color: #211f1f;
 }
+
+/* inscripcion en linea */
+.titulo-pagina2{
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+}
+.descripcion{
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+}
+.formulario-login{
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  margin: 40px auto 20px 39px ;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+.formulario-login label{
+  padding-top: 5px;
+  text-align: center;
+}
+.login{
+  background-color: #ffffff;
+  border-color: #211f1f;
+  margin-bottom: 8px;
+}
+.btn-iniciar{
+  background-color: #8b0000;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 250px;
+  margin-bottom: 15px;
+}
+.contenedor-login{
+  border: 1px solid #b30000;
+  border-radius: 15px;
+  width: 65%;  
+  margin: 40px auto 20px 150px ;
+}
+.nota p{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}

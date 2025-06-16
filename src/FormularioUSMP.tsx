@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import ModalRecibo from './ModalRecibo';
-
 
 const FormularioUSMP = () => {
   const [tipoDoc, setTipoDoc] = useState<number>(1);
@@ -27,6 +27,7 @@ const FormularioUSMP = () => {
 
   const [mostrarModal, setMostrarModal] = useState(false);
 
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/listaTipoDocumento")
@@ -158,7 +159,7 @@ const FormularioUSMP = () => {
 
         <div className="barra-navegacion">
           <button>Genera tu Recibo</button>
-          <button>Inscripción en Línea</button>
+          <button onClick={() => navigate('/inscripcion')}>Inscripción en Línea</button>
           <button>Simulador de Escalas</button>
         </div>
 
