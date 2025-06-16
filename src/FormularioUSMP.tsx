@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import ModalRecibo from './ModalRecibo';
+
 
 const FormularioUSMP = () => {
   const [tipoDoc, setTipoDoc] = useState<number>(1);
@@ -13,6 +15,18 @@ const FormularioUSMP = () => {
   const [tiposDocumento, setTiposDocumento] = useState<{ idDocumento: number; documento: string }[]>([]);
   const [correo, setCorreo] = useState('');
   const [telefono, setTelefono] = useState('');
+  const [registroExitoso, setRegistroExitoso] = useState(false);
+  const [bloquearFormulario, setBloquearFormulario] = useState(false);
+  const [sedes, setSedes] = useState<{ idSede: number; sede: string }[]>([]);
+  const [modalidades, setModalidades] = useState<{ idModalidad: number; modalidad: string }[]>([]);
+  const [escuelas, setEscuelas] = useState<{ idEscuela: number; escuela: string }[]>([]);
+
+  const [sedeSeleccionada, setSedeSeleccionada] = useState<number | null>(null);
+  const [modalidadSeleccionada, setModalidadSeleccionada] = useState<number | null>(null);
+  const [escuelaSeleccionada, setEscuelaSeleccionada] = useState<number | null>(null);
+
+  const [mostrarModal, setMostrarModal] = useState(false);
+
 
   useEffect(() => {
     fetch("https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/listaTipoDocumento")
@@ -73,6 +87,33 @@ const FormularioUSMP = () => {
     }
   }, [numero, verificador, tipoDoc, tiposDocumento]);
 
+  useEffect(() => {
+    if (registroExitoso) {
+      const fetchDatosRecibo = async () => {
+        try {
+          const [resSedes, resModalidades, resEscuelas] = await Promise.all([
+            fetch("https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/listaSede"),
+            fetch("https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/listaModalidad"),
+            fetch("https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/listaEscuela")
+          ]);
+
+          const dataSedes = await resSedes.json();
+          const dataModalidades = await resModalidades.json();
+          const dataEscuelas = await resEscuelas.json();
+
+          setSedes(dataSedes.lista);
+          setModalidades(dataModalidades.lista);
+          setEscuelas(dataEscuelas.lista);
+        } catch (error) {
+          console.error("Error al cargar datos del recibo:", error);
+        }
+      };
+
+      fetchDatosRecibo();
+    }
+  }, [registroExitoso]);
+
+
   const handleRegistrar = async () => {
     try {
       const body = {
@@ -89,13 +130,15 @@ const FormularioUSMP = () => {
         'https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/registrar',
         body
       );
+      const data = response.data;
 
-      if (response.data?.idTipoMensaje === 0) {
-      alert('Registro realizado satisfactoriamente');
-      setMensajeError('');
-    } else {
-      setMensajeError(response.data.mensaje || 'Error desconocido al registrar');
-    }
+      if (data.idTipoMensaje === 2) {
+        setMensajeError('');
+        setRegistroExitoso(true);
+        setBloquearFormulario(true);
+      } else {
+        setMensajeError(data.mensaje || 'Error al registrar');
+      }
     } catch (error) {
       console.error('Error al registrar los datos:', error);
       alert('Hubo un error al registrar los datos');
@@ -122,7 +165,7 @@ const FormularioUSMP = () => {
         <div className="seccion formulario-postulante">
           <h2>Datos del Postulante</h2>
           <div className="fila">
-            <select value={tipoDoc} onChange={handleTipoDocChange}>
+            <select value={tipoDoc} onChange={handleTipoDocChange} disabled={bloquearFormulario}>
               {tiposDocumento.map(doc => (
                 <option key={doc.idDocumento} value={doc.idDocumento}>
                   {doc.documento}
@@ -133,10 +176,12 @@ const FormularioUSMP = () => {
             <input
               type="text"
               value={numero}
+              className='numdoc'
               onChange={(e) => setNumero(e.target.value)}
               maxLength={tipoDoc === 1 ? 8 : 15}
               pattern={tipoDoc === 1 ? '[0-9]*' : undefined}
               inputMode={tipoDoc === 1 ? 'numeric' : 'text'}
+              readOnly={bloquearFormulario}
             />
 
             {tipoDoc === 1 && (
@@ -149,6 +194,7 @@ const FormularioUSMP = () => {
                 }}
                 maxLength={1}
                 style={{ width: '50px' }}
+                readOnly={bloquearFormulario}
               />
             )}
           </div>
@@ -156,61 +202,96 @@ const FormularioUSMP = () => {
           {mensajeError && <p className="mensaje-error">{mensajeError}</p>}
 
           <div className="grid">
+            <label className='etiquetas'>Apellido Paterno</label>
             <input
               type="text"
-              placeholder="Apellido Paterno"
               value={apellidoPaterno}
               onChange={(e) => setApellidoPaterno(e.target.value)}
-              readOnly={tipoDoc === 1}
+              readOnly={tipoDoc === 1 || bloquearFormulario}
             />
+            <label className='etiquetas'>Apellido Materno</label>
             <input
               type="text"
-              placeholder="Apellido Materno"
               value={apellidoMaterno}
               onChange={(e) => setApellidoMaterno(e.target.value)}
-              readOnly={tipoDoc === 1}
+              readOnly={tipoDoc === 1 || bloquearFormulario}
             />
+            <label className='etiquetas'>Nombres</label>
             <input
               type="text"
-              placeholder="Nombres"
               value={nombres}
               onChange={(e) => setNombres(e.target.value)}
-              readOnly={tipoDoc === 1}
+              readOnly={tipoDoc === 1 || bloquearFormulario}
             />
+            <label className='etiquetas'>Telefono</label>
             <input
               type="text"
-              placeholder="Teléfono"
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
+              readOnly={bloquearFormulario}
             />
+            <label className='etiquetas'>Correo</label>
             <input
               type="email"
-              placeholder="Correo"
               className="colspan"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
+              readOnly={bloquearFormulario}
             />
           </div>
 
           <div className="botones">
-            <button className="btn-rojo" onClick={handleRegistrar}>Registrar</button>
+            <button className="btn-rojo" onClick={handleRegistrar} disabled={bloquearFormulario}>Registrar</button>
             <button className="btn-gris">Limpiar Datos</button>
           </div>
         </div>
 
-        <div className="seccion formulario-recibo">
-          <h2>Datos de Recibo</h2>
-          <div className="tabs">
-            {["Pregrado", "Ciclo Cero", "Postgrado", "Virtual", "Centro de Idiomas", "EPU's / Instituciones"].map((label) => (
-              <button key={label}>{label}</button>
-            ))}
+        {registroExitoso && <p className="mensaje-info">Genera el recibo para continuar con el proceso</p>}
+
+        {registroExitoso && (
+          <div className="seccion formulario-recibo">
+            <h2>Datos de Recibo</h2>
+            <div className="tabs">
+              {["Pregrado", "Ciclo Cero", "Postgrado", "Virtual", "Centro de Idiomas", "EPU's / Instituciones"].map((label) => (
+                <button key={label}>{label}</button>
+              ))}
+            </div>
+            <div className="grid">
+              <select value={sedeSeleccionada ?? ''} onChange={(e) => setSedeSeleccionada(Number(e.target.value))}>
+                <option value="">SEDE</option>
+                {sedes.map(s => (
+                  <option key={s.idSede} value={s.idSede}>{s.sede}</option>
+                ))}
+              </select>
+
+              <select value={modalidadSeleccionada ?? ''} onChange={(e) => setModalidadSeleccionada(Number(e.target.value))}>
+                <option value="">MODALIDAD</option>
+                {modalidades.map(m => (
+                  <option key={m.idModalidad} value={m.idModalidad}>{m.modalidad}</option>
+                ))}
+              </select>
+
+              <select value={escuelaSeleccionada ?? ''} onChange={(e) => setEscuelaSeleccionada(Number(e.target.value))}>
+                <option value="">ESCUELA</option>
+                {escuelas.map(e => (
+                  <option key={e.idEscuela} value={e.idEscuela}>{e.escuela}</option>
+                ))}
+              </select>
+            </div>
+             <button className="btn-rojo" onClick={() => setMostrarModal(true)}>
+              Generar Recibo
+             </button>
           </div>
-          <div className="grid">
-            <select><option>SEDE</option></select>
-            <select disabled><option>MODALIDAD</option></select>
-            <select disabled><option>ESCUELA</option></select>
-          </div>
-        </div>
+        )}
+        <ModalRecibo
+          isOpen={mostrarModal}
+          onClose={() => setMostrarModal(false)}
+          nombres={nombres}
+          apellidoPaterno={apellidoPaterno}
+          apellidoMaterno={apellidoMaterno}
+          numeroDocumento={numero}
+          concepto={modalidades.find(m => m.idModalidad === modalidadSeleccionada)?.modalidad || '---'}
+        />
       </div>
     </div>
   );

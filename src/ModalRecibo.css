@@ -1,0 +1,83 @@
+/* Fondo del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contenedor del modal */
+.modal-content {
+  background-color: #fff;
+  border: 5px solid #8a1515;
+  padding: 20px 40px;
+  border-radius: 6px;
+  width: 600px;
+  max-width: 90%;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* Título */
+.modal-content h2 {
+  border-bottom: 3px solid #008080;
+  color: #333;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* Campos de datos */
+.modal-content p {
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+.modal-content p span {
+  font-weight: bold;
+}
+
+/* Texto informativo */
+.modal-content .info-text {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #222;
+  line-height: 1.4;
+}
+
+.modal-content .info-text b {
+  font-weight: bold;
+}
+
+/* Botones */
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.modal-buttons button {
+  padding: 8px 24px;
+  font-size: 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-aceptar {
+  background-color: #8a1515;
+  color: white;
+}
+
+.btn-cancelar {
+  background-color: #ccc;
+  color: black;
+}

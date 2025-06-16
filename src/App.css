@@ -63,25 +63,41 @@
 .fila {
   display: flex;
   gap: 10px;
-  margin-bottom: 15px;
+  width: 80%;
+  margin: 0 auto 15px auto ;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 5fr;
   gap: 15px;
+  width: 80%;
+  margin: 0 auto 15px auto ;
+  
 }
 
 .colspan {
-  grid-column: span 2;
+  grid-column: span 1;
 }
 
-input, select {
+input {
   padding: 8px;
-  font-size: 14px;
-  border: 1px solid #aaa;
+  font-size: 12px;
+  border: 1px solid #F5F5F5;
   border-radius: 4px;
-  width: 100%;
+  width: 280px;
+  background-color: #F5F5F5;
+}
+select{
+  padding: 8px;
+  font-size: 12px;
+  border: 1px solid #F5F5F5;
+  border-radius: 4px;
+  width: 210px;
+  background-color: #F5F5F5;
+}
+.numdoc{
+  width: 188px;
 }
 
 /* Botones */
@@ -134,4 +150,10 @@ input, select {
 }
 .tabs button:hover {
   background-color: #c0c0c0;
+}
+.etiquetas{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  padding-top: 10px;
+  color: #211f1f;
 }
