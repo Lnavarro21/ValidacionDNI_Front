@@ -258,26 +258,30 @@ const FormularioUSMP = () => {
               ))}
             </div>
             <div className="segundoform">
+              <label> Sede 
               <select value={sedeSeleccionada ?? ''} onChange={(e) => setSedeSeleccionada(Number(e.target.value))}>
                 <option value="">SEDE</option>
                 {sedes.map(s => (
                   <option key={s.idSede} value={s.idSede}>{s.sede}</option>
                 ))}
               </select>
-
+              </label>
+              <label> Modalidad 
               <select value={modalidadSeleccionada ?? ''} onChange={(e) => setModalidadSeleccionada(Number(e.target.value))}>
                 <option value="">MODALIDAD</option>
                 {modalidades.map(m => (
                   <option key={m.idModalidad} value={m.idModalidad}>{m.modalidad}</option>
                 ))}
               </select>
-
+              </label>
+              <label> Escuela
               <select value={escuelaSeleccionada ?? ''} onChange={(e) => setEscuelaSeleccionada(Number(e.target.value))}>
                 <option value="">ESCUELA</option>
                 {escuelas.map(e => (
                   <option key={e.idEscuela} value={e.idEscuela}>{e.escuela}</option>
                 ))}
               </select>
+              </label>
             </div>
              <button className="btn-rojo" onClick={() => setMostrarModal(true)}>
               Generar Recibo
@@ -292,6 +296,9 @@ const FormularioUSMP = () => {
           apellidoMaterno={apellidoMaterno}
           numeroDocumento={numero}
           concepto={modalidades.find(m => m.idModalidad === modalidadSeleccionada)?.modalidad || '---'}
+          idModalidad={modalidadSeleccionada ?? 0}
+          idSede={sedeSeleccionada ?? 0}
+          idEscuela={escuelaSeleccionada ?? 0}
         />
       </div>
     </div>

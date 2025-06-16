@@ -1,6 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 
 const InscripcionLinea = () => {
+    const navigate = useNavigate();
+
+  const manejarInicioSesion = () => {
+    // Aquí puedes validar el recibo y el DNI si deseas
+    navigate('/completar-registro');
+  };
   return (
     <div className="contenedor-principal">
       <div className="formulario">
@@ -29,7 +36,7 @@ const InscripcionLinea = () => {
             <label>N° de DNI / D.L.I.:</label>
             <input type="text"  className='login' />        
         </div>
-        <button className="btn-iniciar">Inicio de Sesión</button>
+        <button className="btn-iniciar" onClick={manejarInicioSesion}>Inicio de Sesión</button>
       </div>      
       <div className="nota">
         <p><b>Número de Recibo:</b> Número que aparece impreso en el recibo y que debe coincidir con el que aparece en el comprobante de pago que entrega el banco al momento de su cancelacion</p>

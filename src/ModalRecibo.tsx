@@ -9,6 +9,9 @@ interface ModalReciboProps {
   apellidoMaterno: string;
   numeroDocumento: string;
   concepto: string;
+  idSede: number;
+  idModalidad: number;
+  idEscuela: number;
 }
 
 const ModalRecibo: React.FC<ModalReciboProps> = ({
@@ -19,6 +22,9 @@ const ModalRecibo: React.FC<ModalReciboProps> = ({
   apellidoMaterno,
   numeroDocumento,
   concepto,
+  idSede,
+  idModalidad,
+  idEscuela
 }) => {
   if (!isOpen) return null;
 
@@ -29,9 +35,29 @@ const ModalRecibo: React.FC<ModalReciboProps> = ({
 
   const generarYDescargarRecibo = async () => {
     try {
-      const body = {
-        numeroDocumento,
+      // 1. Enviar datos a la API opcion1
+      const registroBody = {
+        documento: numeroDocumento,
+        idSede,
+        idEscuela,
+        idModalidad
       };
+
+      const registroResponse = await fetch(
+        "https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/opcion1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registroBody),
+        }
+      );
+
+      if (!registroResponse.ok) throw new Error("Error al registrar la opción 1");
+
+      // 2. Generar el PDF
+      const pdfBody = { numeroDocumento };
 
       const response = await fetch(
         "https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/generarPDF",
@@ -40,7 +66,7 @@ const ModalRecibo: React.FC<ModalReciboProps> = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(body),
+          body: JSON.stringify(pdfBody),
         }
       );
 
@@ -49,10 +75,8 @@ const ModalRecibo: React.FC<ModalReciboProps> = ({
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
-      // Abre el PDF en una nueva pestaña
       window.open(url, "_blank");
 
-      // Descarga automática
       const a = document.createElement("a");
       a.href = url;
       a.download = `Recibo_${new Date().toISOString().slice(0, 16).replace(/[-T:]/g, "")}.pdf`;
@@ -86,7 +110,7 @@ const ModalRecibo: React.FC<ModalReciboProps> = ({
 
         <div className="info-text">
           Los datos ingresados en el formulario, le deben pertenecer <b>única y exclusivamente</b> al postulante.
-          Si los datos ingresados no pertenecen al postulante, corregirlos, caso contrario ignore este mensaje.
+          Si los datos ingresados no pertenecen al postulante, corríjalos, caso contrario ignore este mensaje.
           <br /><br />
           ¿Estás seguro de generar el recibo con los siguientes datos?
         </div>

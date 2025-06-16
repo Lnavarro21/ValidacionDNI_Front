@@ -1,4 +1,7 @@
 /* Centrado general */
+body{
+  font-family: Arial, Helvetica, sans-serif;
+}
 .contenedor-principal {
   display: flex;
   justify-content: center;
@@ -214,4 +217,55 @@ select{
 .nota p{
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
+}
+
+/* completar registro */
+.bloques{
+  width: 80%;
+  margin-left: 80px;
+}
+.bloques input{
+  background-color: #ffffff;
+  border-color: #211f1f;
+}
+.bloques select{
+  background-color: #ffffff;
+  border-color: #211f1f;
+  width: 298px;
+}
+.bloque1 .grid-form{
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 2fr;
+  gap: 10px;
+}
+.bloque1 label{
+  align-self: center;
+}
+
+.bloque2 .grid-form{
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 0 auto 15px 220px;
+}
+.bloque2 input{
+  margin-bottom: 10px;
+}
+
+.bloque3 .grid-form{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 auto 15px 150px;
+  gap: 15px
+}
+.btn-GuardarCambios{
+  background-color: #8b0000;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 350px;
+  margin-bottom: 15px;
+  margin-top: 15px;
 }
