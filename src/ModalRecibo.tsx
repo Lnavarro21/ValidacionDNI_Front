@@ -34,64 +34,60 @@ const ModalRecibo: React.FC<ModalReciboProps> = ({
   const codigoMatricula = `0000${numeroDocumento}`;
 
   const generarYDescargarRecibo = async () => {
-    try {
-      // 1. Enviar datos a la API opcion1
-      const registroBody = {
-        documento: numeroDocumento,
-        idSede,
-        idEscuela,
-        idModalidad
-      };
+  try {
+    const registroBody = {
+      documento: numeroDocumento,
+      idSede,
+      idEscuela,
+      idModalidad
+    };
 
-      const registroResponse = await fetch(
-        "https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/opcion1",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(registroBody),
-        }
-      );
+    const registroResponse = await fetch(
+      "https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/opcion1",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registroBody),
+      }
+    );
 
-      if (!registroResponse.ok) throw new Error("Error al registrar la opción 1");
+    if (!registroResponse.ok) throw new Error("Error al registrar la opción 1");
 
-      // 2. Generar el PDF
-      const pdfBody = { numeroDocumento };
+    const pdfResponse = await fetch(
+      "https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/generarPDF",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/pdf", // importante
+        },
+        body: JSON.stringify({ numeroDocumento }),
+      }
+    );
 
-      const response = await fetch(
-        "https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/generarPDF",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(pdfBody),
-        }
-      );
+    if (!pdfResponse.ok) throw new Error("Error al generar el recibo");
 
-      if (!response.ok) throw new Error("Error al generar el recibo");
+    const blob = await pdfResponse.blob();
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, "_blank");
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Recibo_${new Date().toISOString().slice(0, 16).replace(/[-T:]/g, "")}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 
-      window.open(url, "_blank");
+    window.URL.revokeObjectURL(url);
+    onClose();
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Recibo_${new Date().toISOString().slice(0, 16).replace(/[-T:]/g, "")}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      window.URL.revokeObjectURL(url);
-      onClose();
-
-    } catch (error) {
-      console.error("Error generando el recibo:", error);
-      alert("Hubo un problema al generar el recibo.");
-    }
-  };
+  } catch (error) {
+    console.error("Error generando el recibo:", error);
+    alert("Hubo un problema al generar el recibo.");
+  }
+};
 
   return (
     <div className="modal-overlay">
