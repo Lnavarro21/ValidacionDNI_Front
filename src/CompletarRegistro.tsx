@@ -23,18 +23,20 @@ const CompletarRegistro = () => {
     escuela2: ''
   });
 
-  useEffect(() => {
-    const idPostulante = localStorage.getItem("idPostulante");
+  const [idPostulante, setIdPostulante] = useState<number | null>(null);
 
-    if (!idPostulante) {
+  useEffect(() => {
+    const id = localStorage.getItem("idPostulante");
+    if (!id) {
       console.error("No hay idPostulante en localStorage");
       return;
     }
+    setIdPostulante(Number(id));
 
     const fetchPostulante = async () => {
       try {
         const response = await fetch(
-          `https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/postulanteSel?IdPostulante=${idPostulante}`
+          `https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/postulanteSel?IdPostulante=${id}`
         );
         const data = await response.json();
         if (data && data.idPostulante) {
@@ -60,16 +62,58 @@ const CompletarRegistro = () => {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-  const { name, value } = e.target;
-  setForm(prev => ({
-    ...prev,
-    [name]: value
-  }));
-};
+    const { name, value } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  const handleSubmit = () => {
-    // Aquí podrías enviar los datos al backend
-    console.log("Formulario enviado:", form);
+  const handleSubmit = async () => {
+    if (!idPostulante) {
+      alert("No se encontró el id del postulante.");
+      return;
+    }
+
+    const genero = form.genero === 'Masculino' ? 1 : form.genero === 'Femenino' ? 2 : 0;
+    const modalidad = form.modalidad === 'Ordinario' ? 1 : form.modalidad === 'Extraordinario' ? 2 : 0;
+    const sede = form.sede === 'Lima' ? 1 : form.sede === 'Chiclayo' ? 2 : 0;
+
+    const body = {
+      idPostulante,
+      idGenero: genero,
+      fechaNacimiento: form.fechaNacimiento,
+      direccion: form.direccion,
+      colegio3: form.colegio3ro,
+      colegio4: form.colegio4to,
+      colegio5: form.colegio5to,
+      idModalidad: modalidad,
+      idSede: sede,
+      idFacultad: 0,
+      idEscuela: 0
+    };
+
+    try {
+      const response = await fetch(
+        "https://registropostulantes-ezeqcre4c4d6deey.canadacentral-01.azurewebsites.net/api/ValidacionDNI/completarregistro",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        }
+      );
+
+      if (response.ok) {
+        alert("Registro completado exitosamente.");
+      } else {
+        alert("Error al completar el registro.");
+      }
+    } catch (error) {
+      console.error("Error al enviar datos:", error);
+      alert("Error al conectar con el servidor.");
+    }
   };
 
   return (
