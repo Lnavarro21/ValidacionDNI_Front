@@ -59,6 +59,19 @@ const CompletarRegistro = () => {
     fetchPostulante();
   }, []);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const { name, value } = e.target;
+  setForm(prev => ({
+    ...prev,
+    [name]: value
+  }));
+};
+
+  const handleSubmit = () => {
+    // Aquí podrías enviar los datos al backend
+    console.log("Formulario enviado:", form);
+  };
+
   return (
     <div className="contenedor-principal">
       <div className="formulario">
@@ -86,24 +99,25 @@ const CompletarRegistro = () => {
               <label>Apellido Paterno</label><input name="apellidoPaterno" value={form.apellidoPaterno} readOnly />
               <label>Apellido Materno</label><input name="apellidoMaterno" value={form.apellidoMaterno} readOnly />
               <label>Género</label>
-              <select name="genero" value={form.genero} disabled>
+              <select name="genero" value={form.genero} onChange={handleChange}>
                 <option value="">Seleccionar</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
               </select>
-              <label>Fecha Nacimiento</label><input type="date" name="fechaNacimiento" value={form.fechaNacimiento}/>
+              <label>Fecha Nacimiento</label>
+              <input type="date" name="fechaNacimiento" value={form.fechaNacimiento} onChange={handleChange} />
               <label>Email</label><input type="email" name="email" value={form.email} readOnly />
               <label>Celular</label><input name="celular" value={form.celular} readOnly />
-              <label>Dirección</label><input name="direccion" value={form.direccion} />
+              <label>Dirección</label><input name="direccion" value={form.direccion} onChange={handleChange} />
             </div>
           </div>
 
           <div className="bloque2">
             <h3>Educación Secundaria</h3>
             <div className="grid-form">
-              <label>3ro <input name="colegio3ro" value={form.colegio3ro}  /></label>
-              <label>4to <input name="colegio4to" value={form.colegio4to}  /></label>
-              <label>5to <input name="colegio5to" value={form.colegio5to}  /></label>
+              <label>3ro <input name="colegio3ro" value={form.colegio3ro} onChange={handleChange} /></label>
+              <label>4to <input name="colegio4to" value={form.colegio4to} onChange={handleChange} /></label>
+              <label>5to <input name="colegio5to" value={form.colegio5to} onChange={handleChange} /></label>
             </div>
           </div>
 
@@ -111,14 +125,14 @@ const CompletarRegistro = () => {
             <h3>Otras Preferencias</h3>
             <div className="grid-form">
               <label>Modalidad
-                <select name="modalidad" value={form.modalidad} disabled>
+                <select name="modalidad" value={form.modalidad} onChange={handleChange}>
                   <option value="">Seleccionar</option>
                   <option value="Ordinario">Ordinario</option>
                   <option value="Extraordinario">Extraordinario</option>
                 </select>
               </label>
               <label>Sede <br />
-                <select name="sede" value={form.sede} disabled>
+                <select name="sede" value={form.sede} onChange={handleChange}>
                   <option value="">Seleccionar</option>
                   <option value="Lima">Lima</option>
                   <option value="Chiclayo">Chiclayo</option>
@@ -132,11 +146,11 @@ const CompletarRegistro = () => {
             </div>
             <label><b>Opción 2</b></label>
             <div className="grid-form">
-              <label>Facultad<input name="facultad2" value={form.facultad2}  /></label>
-              <label>Escuela<input name="escuela2" value={form.escuela2}  /></label>
+              <label>Facultad<input name="facultad2" value={form.facultad2} onChange={handleChange} /></label>
+              <label>Escuela<input name="escuela2" value={form.escuela2} onChange={handleChange} /></label>
             </div>
           </div>
-          <button className="btn-GuardarCambios" disabled>Guardar</button>
+          <button className="btn-GuardarCambios" onClick={handleSubmit}>Guardar</button>
         </div>
       </div>
     </div>
